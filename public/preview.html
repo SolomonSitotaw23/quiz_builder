@@ -7,24 +7,40 @@
   </head>
   <body class="bg-white text-gray-800">
     <div id="quiz" class="p-4"></div>
+    <div class="p-4">
+      <button
+        id="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded hidden"
+      >
+        Submit
+      </button>
+      <div id="score" class="mt-4 text-lg font-semibold"></div>
+    </div>
 
     <script>
+      let quizData = null;
+
       window.addEventListener('message', (event) => {
         const config = event.data;
-
+        quizData = config;
         document.body.className = config.theme || 'bg-white';
+
         const quizContainer = document.getElementById('quiz');
+        const submitButton = document.getElementById('submit');
+        const scoreDisplay = document.getElementById('score');
+        scoreDisplay.textContent = '';
+
         quizContainer.innerHTML = `
         <h2 class="text-xl font-bold mb-4">${config.title}</h2>
         ${config.questions
           .map(
             (q, i) => `
-          <div class="mb-4">
+          <div class="mb-4" data-q-index="${i}">
             <p class="font-semibold">${i + 1}. ${q.question}</p>
             ${q.options
               .map(
                 (opt, j) => `
-              <label class="block">
+              <label class="block option" data-option-index="${j}">
                 <input type="radio" name="q${i}" value="${j}" class="mr-2">
                 ${opt}
               </label>
@@ -36,6 +52,53 @@
           )
           .join('')}
       `;
+
+        submitButton.classList.remove('hidden');
+        submitButton.disabled = false;
+      });
+
+      document.getElementById('submit').addEventListener('click', () => {
+        if (!quizData) return;
+
+        let score = 0;
+
+        quizData.questions.forEach((q, i) => {
+          const questionDiv = document.querySelector(`[data-q-index="${i}"]`);
+          const selected = questionDiv.querySelector(
+            `input[name="q${i}"]:checked`
+          );
+          const allOptions = questionDiv.querySelectorAll('.option');
+
+          allOptions.forEach((labelEl) => {
+            const radio = labelEl.querySelector('input');
+            const optIndex = parseInt(
+              labelEl.getAttribute('data-option-index')
+            );
+            radio.disabled = true; // Disable all radios
+
+            if (optIndex === q.answer) {
+              labelEl.classList.add('text-green-600', 'font-semibold'); // Highlight correct
+            }
+
+            if (
+              selected &&
+              parseInt(selected.value) === optIndex &&
+              optIndex !== q.answer
+            ) {
+              labelEl.classList.add('text-red-500', 'line-through'); // Mark incorrect
+            }
+          });
+
+          if (selected && parseInt(selected.value) === q.answer) {
+            score++;
+          }
+        });
+
+        document.getElementById(
+          'score'
+        ).textContent = `You scored ${score} out of ${quizData.questions.length}`;
+
+        document.getElementById('submit').disabled = true; // prevent re-submit
       });
     </script>
   </body>
