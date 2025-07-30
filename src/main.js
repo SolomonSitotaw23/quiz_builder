@@ -5,7 +5,7 @@ const applyBtn = document.getElementById('applyConfig');
 const toggleBtn = document.getElementById('toggleMobile');
 const previewContainer = document.getElementById('previewContainer');
 const textarea = document.getElementById('config');
-const themeSelect = document.getElementById('themeSelect'); // Optional dropdown
+const themeSelect = document.getElementById('themeSelect');
 
 // Manual apply
 applyBtn.onclick = () => {
