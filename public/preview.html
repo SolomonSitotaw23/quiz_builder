@@ -7,27 +7,36 @@
   </head>
   <body class="bg-white text-gray-800">
     <div id="quiz" class="p-4"></div>
-    <div class="p-4">
+
+    <div class="p-4 flex flex-col gap-2 md:flex-row md:items-center">
       <button
         id="submit"
         class="px-4 py-2 bg-blue-600 text-white rounded hidden"
       >
         Submit
       </button>
-      <div id="score" class="mt-4 text-lg font-semibold"></div>
+      <button
+        id="retake"
+        class="px-4 py-2 bg-gray-700 text-white rounded hidden"
+      >
+        Retake Quiz
+      </button>
+      <div id="score" class="mt-4 text-lg font-semibold md:ml-4"></div>
     </div>
 
     <script>
       let quizData = null;
 
-      window.addEventListener('message', (event) => {
-        const config = event.data;
-        quizData = config;
+      // Extract rendering logic into reusable function
+      function renderQuiz(config) {
+        quizData = JSON.parse(JSON.stringify(config)); // clone to avoid mutation
         document.body.className = config.theme || 'bg-white';
 
         const quizContainer = document.getElementById('quiz');
         const submitButton = document.getElementById('submit');
+        const retakeButton = document.getElementById('retake');
         const scoreDisplay = document.getElementById('score');
+
         scoreDisplay.textContent = '';
 
         quizContainer.innerHTML = `
@@ -54,9 +63,16 @@
       `;
 
         submitButton.classList.remove('hidden');
+        retakeButton.classList.remove('hidden');
         submitButton.disabled = false;
+      }
+
+      // Listen to config updates from parent
+      window.addEventListener('message', (event) => {
+        renderQuiz(event.data);
       });
 
+      // Handle submission + feedback
       document.getElementById('submit').addEventListener('click', () => {
         if (!quizData) return;
 
@@ -74,10 +90,10 @@
             const optIndex = parseInt(
               labelEl.getAttribute('data-option-index')
             );
-            radio.disabled = true; // Disable all radios
+            radio.disabled = true;
 
             if (optIndex === q.answer) {
-              labelEl.classList.add('text-green-600', 'font-semibold'); // Highlight correct
+              labelEl.classList.add('text-green-600', 'font-semibold');
             }
 
             if (
@@ -85,7 +101,7 @@
               parseInt(selected.value) === optIndex &&
               optIndex !== q.answer
             ) {
-              labelEl.classList.add('text-red-500', 'line-through'); // Mark incorrect
+              labelEl.classList.add('text-red-500', 'line-through');
             }
           });
 
@@ -96,9 +112,15 @@
 
         document.getElementById(
           'score'
-        ).textContent = `You scored ${score} out of ${quizData.questions.length}`;
+        ).textContent = ` You scored ${score} out of ${quizData.questions.length}`;
+        document.getElementById('submit').disabled = true;
+      });
 
-        document.getElementById('submit').disabled = true; // prevent re-submit
+      // Retake quiz
+      document.getElementById('retake').addEventListener('click', () => {
+        if (quizData) {
+          renderQuiz(quizData);
+        }
       });
     </script>
   </body>

@@ -11,58 +11,42 @@
     >
       <!-- Config Panel -->
       <div>
-        <h1 class="text-2xl font-bold mb-4">Quiz Config Panel</h1>
-        <textarea
-          id="config"
-          class="w-full h-96 p-2 rounded border border-gray-300 text-sm font-mono"
+        <h1 class="text-2xl font-bold mb-4">Quiz Builder</h1>
+
+        <label class="block mb-2 font-semibold">Quiz Title</label>
+        <input
+          type="text"
+          id="quizTitle"
+          class="w-full p-2 mb-4 border rounded"
+          value="My Awesome Quiz"
+        />
+
+        <label class="block mb-2 font-semibold">Theme</label>
+        <select id="quizTheme" class="w-full p-2 mb-4 border rounded">
+          <option value="bg-white">White</option>
+          <option value="bg-blue-100">Blue</option>
+          <option value="bg-yellow-50">Yellow</option>
+          <option
+            value="bg-gradient-to-r from-purple-200 via-pink-200 to-red-200"
+          >
+            Gradient
+          </option>
+        </select>
+
+        <div id="questionList" class="space-y-4 mb-4"></div>
+
+        <button
+          id="addQuestion"
+          class="w-full px-4 py-2 bg-green-600 text-white rounded mb-2"
         >
-{
-  "title": "Tailwind Quiz!",
-  "theme": "bg-blue-100",
-  "questions": [
-    {
-      "question": "What does HTML stand for?",
-      "options": ["Hyperlinks and Text Markup Language", "Hyper Text Markup Language", "Home Tool Markup Language"],
-      "answer": 1
-    },
-    {
-      "question": "What year was JavaScript created?",
-      "options": ["1995", "2001", "1989"],
-      "answer": 0
-    }
-  ]
-}
-        </textarea>
-        <div class="mt-4">
-          <label for="themeSelect" class="block font-semibold mb-1"
-            >Theme</label
-          >
-          <select id="themeSelect" class="w-full p-2 border rounded">
-            <option value="bg-white">White</option>
-            <option value="bg-blue-100">Blue</option>
-            <option value="bg-yellow-50">Yellow</option>
-            <option value="bg-green-100">Green</option>
-            <option
-              value="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200"
-            >
-              Gradient (Indigo → Pink)
-            </option>
-          </select>
-        </div>
-        <div class="mt-4 flex gap-2">
-          <button
-            id="applyConfig"
-            class="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Apply Config
-          </button>
-          <button
-            id="toggleMobile"
-            class="px-4 py-2 bg-gray-600 text-white rounded"
-          >
-            Toggle Mobile Preview
-          </button>
-        </div>
+          + Add Question
+        </button>
+        <button
+          id="buildQuiz"
+          class="w-full px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Build & Preview
+        </button>
       </div>
 
       <!-- Preview Area -->
