@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quiz Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white text-gray-800">
+    <div id="quiz" class="p-4"></div>
+
+    <script>
+      window.addEventListener('message', (event) => {
+        const config = event.data;
+
+        document.body.className = config.theme || 'bg-white';
+        const quizContainer = document.getElementById('quiz');
+        quizContainer.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">${config.title}</h2>
+        ${config.questions
+          .map(
+            (q, i) => `
+          <div class="mb-4">
+            <p class="font-semibold">${i + 1}. ${q.question}</p>
+            ${q.options
+              .map(
+                (opt, j) => `
+              <label class="block">
+                <input type="radio" name="q${i}" value="${j}" class="mr-2">
+                ${opt}
+              </label>
+            `
+              )
+              .join('')}
+          </div>
+        `
+          )
+          .join('')}
+      `;
+      });
+    </script>
+  </body>
+</html>
